@@ -1,0 +1,249 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ book.title }} - Bookstore{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-container {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .product-image-section {
+        text-align: center;
+        padding: 20px;
+        background: #f8f8f8;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .product-image-section img {
+        max-width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+    }
+    
+    .product-info h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .product-meta-item {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .product-meta-item .label {
+        width: 120px;
+        color: #999;
+        font-weight: 500;
+    }
+    
+    .product-meta-item .value {
+        flex: 1;
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .price-section {
+        background: #f0f8ff;
+        border: 2px solid var(--primary-blue);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .price-label {
+        color: #999;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .price-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary-blue);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .btn-add-cart {
+        flex: 1;
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+    
+    .btn-add-cart:hover {
+        background: #0066cc;
+        transform: scale(1.02);
+    }
+    
+    .btn-view-cart {
+        flex: 1;
+        background: white;
+        color: var(--primary-blue);
+        border: 2px solid var(--primary-blue);
+        padding: 15px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .btn-view-cart:hover {
+        background: var(--primary-blue);
+        color: white;
+    }
+    
+    .recommendations-section {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #f0f0f0;
+    }
+    
+    .recommendation-card {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    
+    .recommendation-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
+    }
+    
+    .recommendation-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        background: #f8f8f8;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+    
+    .recommendation-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .recommendation-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'book_list' %}">Trang chủ</a></li>
+        <li class="breadcrumb-item active">{{ book.title }}</li>
+    </ol>
+</nav>
+
+<div class="product-detail-container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="product-image-section">
+                <img src="https://via.placeholder.com/350x450/1E90FF/FFFFFF?text={{ book.title|slice:':3' }}" 
+                     alt="{{ book.title }}">
+            </div>
+        </div>
+        
+        <div class="col-md-7">
+            <div class="product-info">
+                <h1>{{ book.title }}</h1>
+                
+                <div class="product-meta-item">
+                    <span class="label">
+                        <i class="fas fa-user"></i> Tác giả:
+                    </span>
+                    <span class="value">{{ book.author }}</span>
+                </div>
+                
+                <div class="product-meta-item">
+                    <span class="label">
+                        <i class="fas fa-warehouse"></i> Tồn kho:
+                    </span>
+                    <span class="value">{{ book.stock_quantity }} cuốn</span>
+                </div>
+                
+                <div class="price-section">
+                    <div class="price-label">Giá bán:</div>
+                    <div class="price-value">₫{{ book.price|floatformat:0 }}</div>
+                    <small class="text-muted">MOQ: 1 cuốn</small>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{% url 'cart_add' book.id %}" class="btn-add-cart add-to-cart-ajax" data-book-id="{{ book.id }}">
+                        <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                    </a>
+                    <a href="{% url 'cart_view' %}" class="btn-view-cart">
+                        <i class="fas fa-shopping-cart"></i> Xem giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="recommendations-section">
+        <h3 class="section-title">
+            <i class="fas fa-lightbulb"></i> Sách gợi ý cho bạn
+        </h3>
+        
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+            {% for b in recommendations %}
+            <div class="col">
+                <a href="{% url 'book_detail' b.id %}" class="text-decoration-none">
+                    <div class="recommendation-card">
+                        <img src="https://via.placeholder.com/180x220/1E90FF/FFFFFF?text={{ b.title|slice:':1' }}" 
+                             alt="{{ b.title }}">
+                        <div class="recommendation-title">{{ b.title }}</div>
+                        <div class="recommendation-price">₫{{ b.price|floatformat:0 }}</div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted text-center">Không có gợi ý sách liên quan.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

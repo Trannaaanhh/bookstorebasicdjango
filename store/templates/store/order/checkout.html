@@ -1,0 +1,277 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Thanh toán - Bookstore{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .checkout-header {
+        margin-bottom: 40px;
+    }
+    
+    .checkout-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .checkout-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 32px;
+    }
+    
+    .checkout-form {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .form-section {
+        margin-bottom: 32px;
+    }
+    
+    .form-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    
+    .form-input, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        transition: border-color 0.3s;
+    }
+    
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+    }
+    
+    .order-summary-box {
+        background: #f0f8ff;
+        border: 2px solid var(--primary-blue);
+        border-radius: 12px;
+        padding: 24px;
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .summary-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    .order-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0ff;
+    }
+    
+    .order-item {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+    }
+    
+    .item-title {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .item-qty {
+        font-size: 12px;
+        color: #999;
+        margin-top: 4px;
+    }
+    
+    .item-total {
+        font-weight: 700;
+        color: var(--primary-blue);
+        white-space: nowrap;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+    
+    .summary-row.total {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-blue);
+        border-top: 2px solid #e0e0ff;
+        padding-top: 12px;
+        margin-top: 12px;
+    }
+    
+    .btn-submit {
+        width: 100%;
+        background: var(--primary-blue);
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+    
+    .btn-submit:hover {
+        background: #0066cc;
+        transform: scale(1.02);
+    }
+    
+    @media (max-width: 768px) {
+        .checkout-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .order-summary-box {
+            position: static;
+            top: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1><i class="fas fa-credit-card"></i> Thanh toán đơn hàng</h1>
+    </div>
+    
+    <div class="checkout-content">
+        <form method="POST" class="checkout-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng
+                </h3>
+                <div class="form-group">
+                    <label class="form-label">Họ và tên *</label>
+                    <input type="text" name="fullname" class="form-input" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Địa chỉ *</label>
+                    <input type="text" name="address" class="form-input" placeholder="123 Đường ABC, Quận 1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Thành phố *</label>
+                    <input type="text" name="city" class="form-input" placeholder="Hà Nội, TP.HCM" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại *</label>
+                    <input type="tel" name="phone" class="form-input" placeholder="0123456789" required>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-truck"></i> Phương thức vận chuyển
+                </h3>
+                <div class="form-group">
+                    <select name="shipping_method" class="form-select" required>
+                        <option value="">-- Chọn phương thức --</option>
+                        {% for method in shipping_methods %}
+                        <option value="{{ method }}">{{ method }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="form-section-title">
+                    <i class="fas fa-wallet"></i> Phương thức thanh toán
+                </h3>
+                <div class="form-group">
+                    <select name="payment_method" class="form-select" required>
+                        <option value="">-- Chọn phương thức --</option>
+                        {% for method in payment_methods %}
+                        <option value="{{ method }}">{{ method }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="order-summary-box">
+                <h3 class="summary-title">
+                    <i class="fas fa-receipt"></i> Đơn hàng
+                </h3>
+                
+                <div class="order-items">
+                    {% for row in items %}
+                    {% with item=row.obj %}
+                    <div class="order-item">
+                        <div style="flex: 1;">
+                            <div class="item-title">{{ item.book.title }}</div>
+                            <div class="item-qty">SL: {{ item.quantity }}</div>
+                        </div>
+                        <div class="item-total">{{ row.line_total|floatformat:0 }}đ</div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+                
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+                    <span>{{ total_price|floatformat:0 }}đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span>30.000đ</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Tổng cộng:</span>
+                    <span>{{ total_price|add:30000|floatformat:0 }}đ</span>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle"></i> Đặt hàng
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

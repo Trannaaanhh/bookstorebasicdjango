@@ -1,0 +1,99 @@
+{% extends "store/base.html" %}
+
+{% block title %}Empty Cart | BookStore{% endblock %}
+
+{% block extra_css %}
+<style>
+    .empty-cart-section {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .empty-icon {
+        font-size: 120px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .empty-text {
+        font-size: 16px;
+        color: #999;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .empty-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0066cc 0%, #003d99 100%);
+        box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #f2f3f7;
+        color: #333;
+        border: 1px solid #ddd;
+        padding: 12px 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: #e0e0e0;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="empty-cart-section">
+    <div class="empty-icon">
+        <i class="fas fa-shopping-cart"></i>
+    </div>
+    <div class="empty-title">Your Cart is Empty</div>
+    <div class="empty-text">
+        You haven't added any books to your cart yet. Start exploring our collection and find your next favorite read!
+    </div>
+    <div class="empty-actions">
+        <a href="{% url 'book_list' %}" class="btn-primary">
+            <i class="fas fa-book"></i> Browse Books
+        </a>
+        <a href="{% url 'book_list' %}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+{% endblock %}

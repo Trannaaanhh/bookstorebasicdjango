@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bookstore - Online Book Market{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --ali-orange: #ff6600;
+            --ali-bg: #f2f3f7;
+            --ali-text-gray: #666;
+        }
+        body {
+            background-color: var(--ali-bg);
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* --- Alibaba Header Style --- */
+        .ali-header {
+            background: #fff;
+            padding: 15px 0;
+            border-bottom: 2px solid #e6e6e6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .logo-link {
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            color: var(--ali-orange);
+            font-weight: 800;
+            font-size: 28px;
+            margin: 0;
+            display: inline-block;
+        }
+        
+        .search-bar-container {
+            border: 2px solid var(--ali-orange);
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            background: white;
+        }
+        
+        .search-input {
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            background: var(--ali-orange);
+            color: white;
+            border: none;
+            padding: 0 35px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #e65c00;
+        }
+        
+        .nav-link-custom {
+            color: #333;
+            font-weight: 500;
+            margin-left: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+        
+        .nav-link-custom:hover {
+            color: var(--ali-orange);
+        }
+        
+        .nav-link-custom i {
+            margin-right: 5px;
+        }
+        
+        /* Cart Badge */
+        .cart-badge {
+            position: relative;
+        }
+        
+        .cart-badge .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+        }
+        
+        /* --- Main Content --- */
+        .main-content {
+            min-height: calc(100vh - 250px);
+            padding: 20px 0;
+        }
+        
+        /* --- Footer --- */
+        footer {
+            background: #fff;
+            margin-top: 50px;
+            padding: 40px 0;
+            border-top: 1px solid #ddd;
+        }
+        
+        footer p {
+            margin: 0;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* --- Additional Styles --- */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <header class="ali-header sticky-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <a href="{% url 'book_list' %}" class="logo-link">
+                        <h2 class="logo-text">📚 Bookstore</h2>
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <form action="{% url 'book_list' %}" method="GET">
+                        <div class="search-bar-container">
+                            <input type="text" name="q" class="search-input" 
+                                   placeholder="Tìm kiếm sách theo tên hoặc tác giả..." 
+                                   value="{{ query }}">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'book_list' %}" class="nav-link-custom">
+                        <i class="fas fa-home"></i> Trang chủ
+                    </a>
+                    <a href="{% url 'cart_view' %}" class="nav-link-custom cart-badge">
+                        <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                        {% if cart_item_count > 0 %}
+                            <span class="badge">{{ cart_item_count }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <div class="container text-center">
+            <p>© 2026 Bookstore - Online Book Marketplace. All rights reserved.</p>
+            <p class="mt-2">
+                <small>Designed with ❤️</small>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add to cart with AJAX - không reload trang
+        document.addEventListener('DOMContentLoaded', function() {
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-ajax');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const bookId = this.getAttribute('data-book-id');
+                    const url = `/cart/add/${bookId}/`;
+                    
+                    // Gửi request AJAX
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Cập nhật badge
+                        const badge = document.querySelector('.cart-badge .badge');
+                        if (badge) {
+                            badge.textContent = data.cart_count;
+                        } else if (data.cart_count > 0) {
+                            // Tạo badge nếu chưa có
+                            const cartLink = document.querySelector('.cart-badge');
+                            if (cartLink && !cartLink.querySelector('.badge')) {
+                                const newBadge = document.createElement('span');
+                                newBadge.className = 'badge';
+                                newBadge.textContent = data.cart_count;
+                                cartLink.appendChild(newBadge);
+                            }
+                        }
+                        
+                        // Hiệu ứng nút
+                        this.style.opacity = '0.5';
+                        setTimeout(() => {
+                            this.style.opacity = '1';
+                        }, 300);
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

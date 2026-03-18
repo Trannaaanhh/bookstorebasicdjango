@@ -1,0 +1,173 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Danh sách sách - Bookstore{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* --- Banner Style --- */
+    .hero-banner {
+        background: linear-gradient(135deg, #ff9966, #ff5e62);
+        height: 180px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
+    }
+    
+    .hero-banner h1 {
+        font-size: 32px;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        margin: 0;
+    }
+    
+    /* --- Product Card Style (Alibaba Clone) --- */
+    .product-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        height: 100%;
+        padding: 12px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-color: var(--ali-orange);
+        transform: translateY(-4px);
+    }
+
+    .card-img-wrapper {
+        width: 100%;
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 12px;
+        background: #f8f8f8;
+        border-radius: 6px;
+    }
+
+    .card-img-wrapper img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .product-title {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.4;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .product-title:hover {
+        color: var(--ali-orange);
+    }
+
+    .product-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .product-meta {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 3px;
+    }
+
+    .add-to-cart-btn {
+        display: block;
+        width: 100%;
+        background-color: white;
+        border: 1px solid var(--ali-orange);
+        color: var(--ali-orange);
+        padding: 8px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: auto;
+        transition: all 0.2s;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: var(--ali-orange);
+        color: white;
+        transform: scale(1.02);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 8px;
+        margin: 40px 0;
+    }
+    
+    .empty-state i {
+        font-size: 80px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-banner">
+            <h1>🌟 Chào mừng đến với chợ sách trực tuyến</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    {% for book in books %}
+        <div class="col-md-3 col-sm-6">
+            <div class="product-card">
+                <a href="{% url 'book_detail' book.id %}" style="text-decoration: none;">
+                    <div class="card-img-wrapper">
+                        <img src="{{ book.image|default:'https://via.placeholder.com/180x240' }}" 
+                             alt="{{ book.title }}">
+                    </div>
+                    <div class="product-title">{{ book.title }}</div>
+                </a>
+                <div class="product-meta">Tác giả: {{ book.author }}</div>
+                <div class="product-meta">Còn lại: {{ book.stock_quantity }} cuốn</div>
+                <div class="product-price">{{ book.price|floatformat:0 }}đ</div>
+                <button class="add-to-cart-btn add-to-cart-ajax" data-book-id="{{ book.id }}">
+                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                </button>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-book-open"></i>
+                <h3>Không tìm thấy sách nào</h3>
+                <p class="text-muted">Hãy thử tìm kiếm với từ khóa khác</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
